@@ -4,7 +4,7 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=40&duration=3000&pause=1000&color=00FF88&center=true&vCenter=true&width=700&lines=PHISHPULSE+v1.0;Advanced+Social+Engineering+Suite;Instagram+|+Facebook+|+TikTok;Real-Time+Intelligence+Platform" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=40&duration=3000&pause=1000&color=00FF88&center=true&vCenter=true&width=700&lines=PHISHPULSE+v1.0;Advanced+Social+Engineering+Suite;Instagram+|+Facebook+|+TikTok;RReal-Time+Intelligence+Platform" />
     <source media="(prefers-color-scheme: light)" srcset="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=40&duration=3000&pause=1000&color=009944&center=true&vCenter=true&width=700&lines=PHISHPULSE+v1.0;Advanced+Social+Engineering+Suite;Instagram+|+Facebook+|+TikTok;Real-Time+Intelligence+Platform" />
     <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=40&duration=3000&pause=1000&color=00FF88&center=true&vCenter=true&width=700&lines=PHISHPULSE+v1.0;Advanced+Social+Engineering+Suite;Instagram+|+Facebook+|+TikTok;Real-Time+Intelligence+Platform" alt="PhishPulse" />
   </picture>
